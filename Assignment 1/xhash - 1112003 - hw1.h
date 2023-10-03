@@ -10,16 +10,16 @@ using std::list;
 
 // CLASS TEMPLATE VectorVal
 template< typename ValueType >
-class VectorVal             //hash table, array ¤¤¨â­Ó¤¸¯À¬°¤@­Óbucket¡A¦]¬°list¬O¦h­Óvalue²Õ¦¨ªº¦h­Óµuªº list ©Ò¦ê¦¨ªº¤@­Óªøªº list¡A¤@­Ópointer«ü¦V³æ­ÓlistªºÀY¡A¥t¤@­Ó«ü¦V§À¡A¥Î¨Ó°Ï¤À¦h¬qlist
+class VectorVal             //hash table, array ä¸­å…©å€‹å…ƒç´ ç‚ºä¸€å€‹bucketï¼Œå› ç‚ºlistæ˜¯å¤šå€‹valueçµ„æˆçš„å¤šå€‹çŸ­çš„ list æ‰€ä¸²æˆçš„ä¸€å€‹é•·çš„ listï¼Œä¸€å€‹pointeræŒ‡å‘å–®å€‹listçš„é ­ï¼Œå¦ä¸€å€‹æŒ‡å‘å°¾ï¼Œç”¨ä¾†å€åˆ†å¤šæ®µlist
 {
 public:
     using value_type = ValueType;
     using pointer = value_type*;
 
     VectorVal()
-        : myFirst(),      //vectorªº²Ä¤@­Ó¤¸¯À
-        myLast(),       //vector¦³¥Î¨ìªº³Ì«á¤@­Ó¤¸¯Àªº¤U¤@­Ó
-        myEnd()         //vectorªº³Ì«á¤@­Ó¤¸¯Àªº¤U¤@­Ó
+        : myFirst(),      //vectorçš„ç¬¬ä¸€å€‹å…ƒç´ 
+        myLast(),       //vectoræœ‰ç”¨åˆ°çš„æœ€å¾Œä¸€å€‹å…ƒç´ çš„ä¸‹ä¸€å€‹
+        myEnd()         //vectorçš„æœ€å¾Œä¸€å€‹å…ƒç´ çš„ä¸‹ä¸€å€‹
     {
     }
 
@@ -35,12 +35,12 @@ struct HashVec
     using size_type = size_t;
 
     HashVec()
-        : myData()    //¦¹class¤@³Q«Øºc´NÄ~©ÓmyData (VecctorVal ªºª«¥ó)
+        : myData()    //æ­¤classä¸€è¢«å»ºæ§‹å°±ç¹¼æ‰¿myData (VecctorVal çš„ç‰©ä»¶)
     {
     }
 
-    // set the elements stored here to cells copies of val ±N¦¹³B¦sÀxªº¤¸¯À³]¸m¬°Àx¦s®æ Val ªº°Æ¥»
-    void assignGrow(const size_type cells, const value_type val)       //±N©I¥s¦¹functionªºª«¥óÂX¤j¦Ü cells ¼Æ¶qªº bucket
+    // set the elements stored here to cells copies of val å°‡æ­¤è™•å­˜å„²çš„å…ƒç´ è¨­ç½®ç‚ºå„²å­˜æ ¼ Val çš„å‰¯æœ¬
+    void assignGrow(const size_type cells, const value_type val)       //å°‡å‘¼å«æ­¤functionçš„ç‰©ä»¶æ“´å¤§è‡³ cells æ•¸é‡çš„ bucket
     {
         size_t oldsize = static_cast<size_type>(myData.myLast - myData.myFirst);
         value_type* newVec = new value_type[cells];
@@ -59,16 +59,16 @@ struct HashVec
             delete[] myData.myFirst;
     }
 
-    VectorVal< value_type > myData;      //MyData¬° VecctorVal ªºª«¥ó¡A¬°vector¤¤ªº¤¸¯À
+    VectorVal< value_type > myData;      //MyDataç‚º VecctorVal çš„ç‰©ä»¶ï¼Œç‚ºvectorä¸­çš„å…ƒç´ 
 };
 
 // CLASS TEMPLATE Hash
 template< typename Traits >
-class Hash // hash table -- list with vector of iterators for quick access (iterators = °O¾ĞªÅ¶¡¦ì§}¡A¨Ï¥Î¤èªk¦p«ü¼Ğ)
+class Hash // hash table -- list with vector of iterators for quick access (iterators = è¨˜æ†¶ç©ºé–“ä½å€ï¼Œä½¿ç”¨æ–¹æ³•å¦‚æŒ‡æ¨™)
 {
 protected:
-    using MyList = list< typename Traits::value_type >;      //MyList ¬° list< typename Traits::value_type >ªº§O¦W 
-    using KeyCompare = typename Traits::key_compare;             //typename ¬°ÃöÁä¦r¡A¥Î¨Ó§i¶D½sÄ¶¾¹±µ¤U¨Óªº¦WºÙ¬O¤@­ÓÃş«¬¦WºÙ
+    using MyList = list< typename Traits::value_type >;      //MyList ç‚º list< typename Traits::value_type >çš„åˆ¥å 
+    using KeyCompare = typename Traits::key_compare;             //typename ç‚ºé—œéµå­—ï¼Œç”¨ä¾†å‘Šè¨´ç·¨è­¯å™¨æ¥ä¸‹ä¾†çš„åç¨±æ˜¯ä¸€å€‹é¡å‹åç¨±
 
 public:
     using key_type = typename Traits::key_type;
@@ -95,27 +95,27 @@ public:
     // Returns the number of elements in the unordered_set container.
     size_type size() const
     {
-        return myList.size();         //list¤¸¯À­Ó¼Æ¡A­è¦n»P¶Ç¤J¼Æ­È(insert)ªº¼Æ¶q¤@¼Ë¦h
+        return myList.size();         //listå…ƒç´ å€‹æ•¸ï¼Œå‰›å¥½èˆ‡å‚³å…¥æ•¸å€¼(insert)çš„æ•¸é‡ä¸€æ¨£å¤š
     }
 
     // Returns the number of buckets in the unordered_set container.
     size_type bucket_count() const
     {
-        return maxidx;    //bucketsªº¼Æ¶q
+        return maxidx;    //bucketsçš„æ•¸é‡
     }
 
     // Returns the bucket number where the element with value keyVal is located.
-    size_type bucket(const key_type& keyVal) const     //¶Ç¤Jhash val­È¡Aºâ¥X³o­Ókey¦b­ş­Óbucket(¦^¶ÇbucketNumber)
+    size_type bucket(const key_type& keyVal) const     //å‚³å…¥hash valå€¼ï¼Œç®—å‡ºé€™å€‹keyåœ¨å“ªå€‹bucket(å›å‚³bucketNumber)
     {
-        //©I¥soperator()¡A±Nkey­È¶Ç¤J¦A°µFNV_la hash function ±o¨ìhash value¡A¦A»Pmask°µbitwise and¡A±o¥Xbucket¦ì¸m
-        return traitsObj(keyVal) & mask;        //traitsObj¬°Traits«¬ºAªº¤@­Óª«¥ó¡ATtaitsªº§ÎºA¥Ñ«Å§iHashª«¥ó®É¨M©w
+        //å‘¼å«operator()ï¼Œå°‡keyå€¼å‚³å…¥å†åšFNV_la hash function å¾—åˆ°hash valueï¼Œå†èˆ‡maskåšbitwise andï¼Œå¾—å‡ºbucketä½ç½®
+        return traitsObj(keyVal) & mask;        //traitsObjç‚ºTraitså‹æ…‹çš„ä¸€å€‹ç‰©ä»¶ï¼ŒTtaitsçš„å½¢æ…‹ç”±å®£å‘ŠHashç‰©ä»¶æ™‚æ±ºå®š
         //      return traitsObj.operator()( keyVal ) & mask;
-        //      return traitsObj( keyVal ) % maxidx;        //·ímaxidx(bucket¼Æ)¬°2ªºn¦¸¤è®É¡A¨Ï¥Î & or % µª®×¬Ûµ¥
+        //      return traitsObj( keyVal ) % maxidx;        //ç•¶maxidx(bucketæ•¸)ç‚º2çš„næ¬¡æ–¹æ™‚ï¼Œä½¿ç”¨ & or % ç­”æ¡ˆç›¸ç­‰
         //      return traitsObj.operator()( keyVal ) % maxidx;
     }
 
     // Returns the number of elements in bucket n.
-    size_type bucket_size(size_type n) const       //¦^¶Çbucket n ªº¤¸¯À­Ó¼Æ (¦¹bucket«ü¦Vªº¤@¤p¦êlistªºnode¦³¦h¤Ö­Ó=¹ïÀ³¦¹hashKeyªºhashValue¦³¦h¤Ö)
+    size_type bucket_size(size_type n) const       //å›å‚³bucket n çš„å…ƒç´ å€‹æ•¸ (æ­¤bucketæŒ‡å‘çš„ä¸€å°ä¸²listçš„nodeæœ‰å¤šå°‘å€‹=å°æ‡‰æ­¤hashKeyçš„hashValueæœ‰å¤šå°‘)
     {
         if (n >= maxidx)
             return 0;
@@ -126,12 +126,12 @@ public:
 
         //--------------------------------------------------
 
-        if (&(myVec.myData.myFirst[2 * n]) == &(myVec.myData.myFirst[2 * n + 1])) { //¦P¤@­ÓkeyªºÀY§Àbucket«ü¦V¦P¤@­Ólist node
+        if (&(myVec.myData.myFirst[2 * n]) == &(myVec.myData.myFirst[2 * n + 1])) { //åŒä¸€å€‹keyçš„é ­å°¾bucketæŒ‡å‘åŒä¸€å€‹list node
             return 1;
         }
         ;
         size_type counter = 1;
-        iterator it = myVec.myData.myFirst[2 * n + 1];            //¦¹key­Èªºbucket©Ò«ü¦Vªº¤@¤p±ølistªºÀY
+        iterator it = myVec.myData.myFirst[2 * n + 1];            //æ­¤keyå€¼çš„bucketæ‰€æŒ‡å‘çš„ä¸€å°æ¢listçš„é ­
         for (; it != myVec.myData.myFirst[2 * n]; ++it) {
             counter++;
         }
@@ -146,18 +146,18 @@ public:
     {
         if (find(val) == myList.end())
         {
-            if (myList.size() == maxidx)      //myList.size() = ²{¦bªº¤¸¯À­Ó¼Æ (­ninsert¤¸¯À»İ¥ıÂX¤jbucket)
+            if (myList.size() == maxidx)      //myList.size() = ç¾åœ¨çš„å…ƒç´ å€‹æ•¸ (è¦insertå…ƒç´ éœ€å…ˆæ“´å¤§bucket)
             {
                 if (maxidx == 8 || maxidx == 64)
                     maxidx *= 8;
                 else
                     maxidx *= 2;
 
-                myVec.assignGrow(2 * maxidx, myList.end());       //ÂX¤jbucket
-                MyList oldList(myList);         //copy constructor ³Ğ«ØoldList®É§âmyList¤¤ªº¤º®e½Æ»s¶i¥h 
-                myList.clear();         //myList¤º®e²M±¼
+                myVec.assignGrow(2 * maxidx, myList.end());       //æ“´å¤§bucket
+                MyList oldList(myList);         //copy constructor å‰µå»ºoldListæ™‚æŠŠmyListä¸­çš„å…§å®¹è¤‡è£½é€²å» 
+                myList.clear();         //myListå…§å®¹æ¸…æ‰
                 for (iterator it = oldList.begin(); it != oldList.end(); ++it) {
-                    putIn(*it);         //±NÂÂlist(¶Ç¤J­È*it(¶Ç­È©I¥s))¤¤ªº¤º®e¦s¶i·sªºlist(©I¥s¦¹functionªºª«¥ó)
+                    putIn(*it);         //å°‡èˆŠlist(å‚³å…¥å€¼*it(å‚³å€¼å‘¼å«))ä¸­çš„å…§å®¹å­˜é€²æ–°çš„list(å‘¼å«æ­¤functionçš„ç‰©ä»¶)
                 }
                 putIn(val);
                 oldList.clear();
@@ -175,14 +175,14 @@ public:
         if (it != myList.end()) // found
         {
             size_type keyValue = bucket(keyVal);
-            if (myVec.myData.myFirst[2 * keyValue] == myVec.myData.myFirst[2 * keyValue + 1]) {       //¦¹¤p¦êlist¥u¦³¤@­Ónode
-                if (myVec.myData.myFirst[2 * keyValue] != myList.end()) {     ////¦¹¤p¦êlist¥u¦³¤@­Ónode¥B¦b³Ì§Àºİ (head node ­n«ü¦V­ì¥»ªº­Ë¼Æ²Ä¤G­Ó)
+            if (myVec.myData.myFirst[2 * keyValue] == myVec.myData.myFirst[2 * keyValue + 1]) {       //æ­¤å°ä¸²liståªæœ‰ä¸€å€‹node
+                if (myVec.myData.myFirst[2 * keyValue] != myList.end()) {     ////æ­¤å°ä¸²liståªæœ‰ä¸€å€‹nodeä¸”åœ¨æœ€å°¾ç«¯ (head node è¦æŒ‡å‘åŸæœ¬çš„å€’æ•¸ç¬¬äºŒå€‹)
                     iterator it2 = ++myList.end();
                 }
                 myVec.myData.myFirst[2 * keyValue] = myList.end();
                 myVec.myData.myFirst[2 * keyValue + 1] = myList.end();
             }
-            else if (*(myVec.myData.myFirst[2 * keyValue + 1]) == keyVal) {        //¦¹key­È¦³½Æ¼Ænode
+            else if (*(myVec.myData.myFirst[2 * keyValue + 1]) == keyVal) {        //æ­¤keyå€¼æœ‰è¤‡æ•¸node
                 myVec.myData.myFirst[2 * keyValue + 1] = ++it;
             }
             else if (*(myVec.myData.myFirst[2 * keyValue]) == keyVal) {
@@ -195,7 +195,7 @@ public:
 
     // Searches the unordered_set for an element with keyVal as value and
     // returns an iterator to it if found, otherwise it returns myList.end()
-    iterator find(const key_type& keyVal)      //¦Alist¤¤§ä¨ì¦³µÛ¶Ç¤Jkeyªºnode¡A¦A±N«ü¦V¦¹nodeªºiterator¦^¶Ç
+    iterator find(const key_type& keyVal)      //å†listä¸­æ‰¾åˆ°æœ‰è‘—å‚³å…¥keyçš„nodeï¼Œå†å°‡æŒ‡å‘æ­¤nodeçš„iteratorå›å‚³
     {
         size_type bucketNo = bucket(keyVal);         //bucket number
         if (myVec.myData.myFirst[2 * bucketNo] == myList.end()) {
@@ -213,16 +213,16 @@ public:
 
 private:
     // put a new element in the unordered_set when myVec is large enough
-    void putIn(const value_type& val)          //±N¤¤ªº¤º®e¦s¶i·sªºvector
+    void putIn(const value_type& val)          //å°‡ä¸­çš„å…§å®¹å­˜é€²æ–°çš„vector
     {
-        size_type keyValue = bucket(val);       //±oKey­È
-        if (myVec.myData.myFirst[2 * keyValue] == myList.end()) {        //¦¹bucketÁÙ¥¼¦³¤¸¯À
-            myList.push_back(val);           //¦blist³Ì«á´¡¤Jvalue
-            myVec.myData.myFirst[2 * keyValue] = find(keyValue);         //¦¹key­ÈªºÀY§À¬Ò«ü¦V·s´¡¤Jªºvalªº¦ì¸mªºiterator
+        size_type keyValue = bucket(val);       //å¾—Keyå€¼
+        if (myVec.myData.myFirst[2 * keyValue] == myList.end()) {        //æ­¤bucketé‚„æœªæœ‰å…ƒç´ 
+            myList.push_back(val);           //åœ¨listæœ€å¾Œæ’å…¥value
+            myVec.myData.myFirst[2 * keyValue] = find(keyValue);         //æ­¤keyå€¼çš„é ­å°¾çš†æŒ‡å‘æ–°æ’å…¥çš„valçš„ä½ç½®çš„iterator
             myVec.myData.myFirst[2 * keyValue + 1] = myVec.myData.myFirst[2 * keyValue];
         }
-        else {           //¦¹key¤¤¤w¦³¤¸¯À (´¡¶i¦¹¤p¦êlistªºÀYªº¦ì¸m¡AkeyValue*2+1«ü¦V¦¹³B)
-            iterator it = myVec.myData.myFirst[2 * keyValue + 1];        //´¡¤J¤¸¯À«e¡A¤p¦êlistªº²Ä¤@­Óªºiterator
+        else {           //æ­¤keyä¸­å·²æœ‰å…ƒç´  (æ’é€²æ­¤å°ä¸²listçš„é ­çš„ä½ç½®ï¼ŒkeyValue*2+1æŒ‡å‘æ­¤è™•)
+            iterator it = myVec.myData.myFirst[2 * keyValue + 1];        //æ’å…¥å…ƒç´ å‰ï¼Œå°ä¸²listçš„ç¬¬ä¸€å€‹çš„iterator
             myList.insert(it, val);
             myVec.myData.myFirst[2 * keyValue + 1] = --it;
         }
@@ -230,8 +230,8 @@ private:
 
 protected:
     Traits traitsObj;          // traits to customize behavior
-    MyList myList;             // list of elements, must initialize before myVec (myList ¬° STL ªº list ©Ò«Å§iªºª«¥ó¡A¥Î¨Ó±Nvalue¦ê°_¨Ó)
-    HashVec< iterator > myVec; // "vector" of list iterators for buckets:    (¦Û©w¸qªºvector¡A¸Ì­±¸Ë¦ì¸m¡A«ü¦Vlist¤¤ªºvalue)
+    MyList myList;             // list of elements, must initialize before myVec (myList ç‚º STL çš„ list æ‰€å®£å‘Šçš„ç‰©ä»¶ï¼Œç”¨ä¾†å°‡valueä¸²èµ·ä¾†)
+    HashVec< iterator > myVec; // "vector" of list iterators for buckets:    (è‡ªå®šç¾©çš„vectorï¼Œè£¡é¢è£ä½ç½®ï¼ŒæŒ‡å‘listä¸­çš„value)
     // each bucket is 2 iterators denoting
     // the closed range of elements in the bucket,
     // or both iterators set to end() if the bucket is empty.
