@@ -165,10 +165,12 @@ public:
             myVec.assignGrow( 2 * maxidx, myList.end() );       //擴大bucket
             MyList oldList(myList);         //copy constructor 創建oldList時把myList中的內容複製進去 
             myList.clear();         //myList內容清掉
-            for (iterator it = oldList.begin(); it != oldList.end(); ++it) {
-                putIn(*it);         //將舊list(傳入值*it(傳值呼叫))中的內容存進新的list(呼叫此function的物件)
+            size_type tmp = NULL;
+            for (iterator it = oldList.begin(); it != oldList.end(); it++) {
+                putIn(*it);
+                //將舊list(傳入值*it(傳值呼叫))中的內容存進新的list(呼叫此function的物件)
             }
-            putIn(val);
+            
             oldList.clear();
          }
          putIn( val );
@@ -192,10 +194,10 @@ public:
               myVec.myData.myFirst[2 * keyValue + 1] = myList.end();
           }
           else if (*(myVec.myData.myFirst[2 * keyValue + 1]) == keyVal) {        //此key值有複數node
-              myVec.myData.myFirst[2 * keyValue + 1] = ++it;
+              myVec.myData.myFirst[2 * keyValue + 1] = --it;
           }
           else if (*(myVec.myData.myFirst[2 * keyValue]) == keyVal) {
-              myVec.myData.myFirst[2 * keyValue] = --it;
+              myVec.myData.myFirst[2 * keyValue] = ++it;
           }
 
          myList.erase( it );
@@ -245,11 +247,11 @@ private:
            myList.insert(it, val);
            myVec.myData.myFirst[2 * keyValue] = --it;
        }
-       cout << val << " " << keyValue << "\t";
-       for (value_type i : myList) {
+       //cout << val << " " << keyValue << "\t";
+       /*for (value_type i : myList) {
            cout << i << " ";
        }
-       cout << endl << endl;
+       cout << endl << endl;*/
    }
 
 protected:
