@@ -165,11 +165,11 @@ public:
               myHead->right = child;
           }
           else {                        //child is the external node
-			  myHead->parent = myHead;
-			  myHead->left = myHead;
-			  myHead->right = myHead;
-			  myHead->isNil = 1;
-			  myHead->color = 1;
+	      myHead->parent = myHead;
+	      myHead->left = myHead;
+	      myHead->right = myHead;
+	      myHead->isNil = 1;
+	      myHead->color = 1;
           }
       }
       else
