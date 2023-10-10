@@ -68,6 +68,9 @@ public:
          u = g->left;
 
       //p == black, do nothing (case 2.)
+      if (p->color == 1) {
+          return;
+      }
 
       if( u->color == 0 ) // ( red ) (case 3.)
       {
@@ -116,16 +119,18 @@ public:
    void rightRotation( TreeNode< value_type > *p )
    {
       TreeNode< value_type > *g = p->parent;
+      TreeNode<value_type> *PR = p->right; // left child of p
       p->right = g;
       g->parent = p;
       p->left->parent = g;
-      g->left = p->right;
+      g->left = PR;
    }
 
    // rotate left at g, where p = g->right
    void leftRotation( TreeNode< value_type > *p )
    {
       TreeNode< value_type > *g = p->parent;
+      TreeNode<value_type> *PL = p->left; // left child of p
       p->left = g;
       g->parent = p;
       p->left = g->right;
@@ -332,6 +337,7 @@ public:
             else
                return;
          }
+          
          //inserts a new node
          TreeNode< value_type > *newNode = new TreeNode< value_type >;
          newNode->parent = result;  
@@ -393,6 +399,10 @@ public:
                   tryNode = tryNode->left;
               }
           }
+		  else {
+			  scaryVal.eraseDegreeOne(erasedNode);
+			  return 1;
+		  }
           
           erasedNode->myval = tryNode->myval;               //replace erasedNode's val with tryNode's val
 
