@@ -118,12 +118,21 @@ public:
    // rotate right at g, where p = g->left
    void rightRotation( TreeNode< value_type > *p )
    {
-      TreeNode< value_type > *g = p->parent;
+      TreeNode< value_type > *g = p->parent;        
       TreeNode<value_type> *PR = p->right; // left child of p
-      p->right = g;
-      g->parent = p;
-      p->left->parent = g;
+      //let g's parent point to p
+      if (g->parent->left == g) {
+		  g->parent->left = p;
+	  }
+	  else {
+		  g->parent->right = p;
+	  }
+
+      p->parent = g->parent;    
+      p->right = g;             //p up, g down
+      g->parent = p;            
       g->left = PR;
+      PR->parent = g;
    }
 
    // rotate left at g, where p = g->right
@@ -131,19 +140,28 @@ public:
    {
       TreeNode< value_type > *g = p->parent;
       TreeNode<value_type> *PL = p->left; // left child of p
+      //let g's parent point to p
+      if (g->parent->left == g) {
+          g->parent->left = p;
+      }
+      else{
+          g->parent->right = p;
+      }
+
+      p->parent = g->parent;    
       p->left = g;
       g->parent = p;
-      p->left = g->right;
-      g->right = p->left;
+      g->right = PL;
+      PL->parent = g;
    }
 
    // erase erasedNode provided that the degree of erasedNode is at most one
    // erasedNode points to the node to be deleted
    // erasedNode == M in "Ch 3 Sec 9.pptx"
-   void eraseDegreeOne( TreeNode< value_type > *erasedNode )
+   void eraseDegreeOne( TreeNode< value_type > *erasedNode )        
    {
-      TreeNode< value_type > *child;
-      if( erasedNode->left != myHead )
+      TreeNode< value_type > *child;               
+      if( erasedNode->left != myHead )                      //erasdNode only has one child or no child
          child = erasedNode->left;
       else if( erasedNode->right != myHead )
          child = erasedNode->right;
@@ -165,22 +183,31 @@ public:
               myHead->right = child;
           }
           else {                        //child is the external node
-	      myHead->parent = myHead;
-	      myHead->left = myHead;
-	      myHead->right = myHead;
-	      myHead->isNil = 1;
-	      myHead->color = 1;
+			  myHead->parent = myHead;
+			  myHead->left = myHead;
+			  myHead->right = myHead;
+			  myHead->isNil = 1;
+			  myHead->color = 1;
           }
       }
       else
       {
-          if (erasedNode->color == 1) {     //case 1.
+          if (erasedNode->color == 1) {     //erasedNode is black
               child->parent = erasedNode->parent;
+              if (child->color == 0) // Case 2 in "Ch 3 Sec 9.pptx"
+                  child->color = 1;
+              else                   // Case 4 in "Ch 3 Sec 9.pptx"
+                  fixUp(child, erasedNode->parent);
           }
-          if( child->color == 0 ) // Case 2 in "Ch 3 Sec 9.pptx"
-             child->color = 1;
-          else                   // Case 4 in "Ch 3 Sec 9.pptx"
-             fixUp( child, erasedNode->parent );
+          else {        //erasedNode is red (case 1.)
+              child->parent = erasedNode->parent;
+              if (erasedNode->parent->left == erasedNode) {
+                  erasedNode->parent->left = child;
+              }
+              else {
+                  erasedNode->parent->right = child;
+              }
+          }
       }
       delete erasedNode;
       mySize--;
@@ -368,28 +395,28 @@ public:
    // Returns the number of elements erased.
    size_type erase( const key_type &val )
    {
-      TreeNode< key_type > *erasedNode = scaryVal.myHead->parent; // erasedNode points to the root
-      while( erasedNode != scaryVal.myHead && val != erasedNode->myval )
-      {
-//           keyCompare.operator()( val, erasedNode->myval )
-          if (keyCompare(val, erasedNode->myval)) // if( val < erasedNode->myval )
-              erasedNode = erasedNode->left;
-          else if (keyCompare(erasedNode->myval, val))
-              erasedNode = erasedNode->right;
-          else  return 0;
-      }
+       TreeNode< key_type >* erasedNode = scaryVal.myHead->parent; // erasedNode points to the root
+       while (erasedNode != scaryVal.myHead && val != erasedNode->myval)
+       {
+           //           keyCompare.operator()( val, erasedNode->myval )
+           if (keyCompare(val, erasedNode->myval)) // if( val < erasedNode->myval )
+               erasedNode = erasedNode->left;
+           else
+               erasedNode = erasedNode->right;
+       }
 
       if( erasedNode == scaryVal.myHead ) // not found
          return 0;
       else // found
       {  // deletes the node pointed by erasedNode
 
-          TreeNode<key_type>* tryNode = new TreeNode<key_type>;         //tryNode point to the biggest val in erasedNode's left subtree
+          TreeNode<value_type>* tryNode = new TreeNode<value_type>;         //tryNode point to the biggest val in erasedNode's left subtree
+
           if (erasedNode->left != scaryVal.myHead) {
               tryNode = erasedNode->left;
               while (tryNode->right != scaryVal.myHead)         //find the biggest val in erasedNode's left subtree
               {
-                  tryNode = tryNode->right;
+                  tryNode = tryNode->right;         
               }
           }
           else if(erasedNode->right != scaryVal.myHead){
@@ -400,7 +427,7 @@ public:
               }
           }
 		  else {
-			  scaryVal.eraseDegreeOne(erasedNode);
+			  scaryVal.eraseDegreeOne(erasedNode);              //erasedNode is a internal node
 			  return 1;
 		  }
           
