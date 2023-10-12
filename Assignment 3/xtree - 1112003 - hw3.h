@@ -56,23 +56,27 @@ public:
 	}
 
 	// rebalance for insertion; n points to the inserted node
-	void reBalance(TreeNode< value_type >* n)
+	void reBalance(TreeNode< value_type >* n)				//n have parent, but grandparent may be myhead
 	{  // n->parent cannot be the root
 		TreeNode< value_type >* p = n->parent;
 		TreeNode< value_type >* g = p->parent;
 		TreeNode< value_type >* u; // uncle of n
 
+		if (g == myHead)  return;
+
 		if (p == g->left)
 			u = g->right;
-		else
+		else if (p == g->right)
 			u = g->left;
+		else
+			return;
 
-		//p == black, do nothing (case 2.)
+		//p is black, do nothing (case 2.)
 		if (p->color == 1) {
 			return;
 		}
 
-		if (u->color == 0) // ( red ) (case 3.)      // p is red, u is red
+		if (u->color == 0) // ( red )
 		{
 			p->color = 1;
 			u->color = 1;
@@ -84,13 +88,13 @@ public:
 					reBalance(g);
 			}
 		}
-		else // u->color == 1 ( black ) (case 4.)
+		else // u->color == 1 ( black )
 		{
 			if (n == p->left && p == g->left)
 			{
 				p->color = 1;
 				g->color = 0;
-				rightRotation(p);         //p up, g down
+				rightRotation(p);
 			}
 			if (n == p->left && p == g->right)
 			{
@@ -120,6 +124,7 @@ public:
 	{
 		TreeNode< value_type >* g = p->parent;
 		TreeNode<value_type>* PR = p->right; // left child of p
+
 		//let g's parent point to p
 		if (g->parent->left == g) {
 			g->parent->left = p;
@@ -131,8 +136,14 @@ public:
 		p->parent = g->parent;
 		p->right = g;             //p up, g down
 		g->parent = p;
-		g->left = PR;
-		PR->parent = g;
+
+		if (PR != myHead) {			//if PR is myhead, PR's parent is root
+			PR->parent = g;
+			g->left = PR;
+		}
+		else {
+			g->left = myHead;
+		}
 	}
 
 	// rotate left at g, where p = g->right
@@ -140,19 +151,29 @@ public:
 	{
 		TreeNode< value_type >* g = p->parent;
 		TreeNode<value_type>* PL = p->left; // left child of p
+
 		//let g's parent point to p
 		if (g->parent->left == g) {
 			g->parent->left = p;
 		}
-		else {
+		else
+		{
 			g->parent->right = p;
 		}
 
 		p->parent = g->parent;
 		p->left = g;
 		g->parent = p;
-		g->right = PL;
-		PL->parent = g;
+
+		if (PL != myHead)
+		{
+			PL->parent = g;
+			g->right = PL;
+		}
+		else
+		{
+			g->right = myHead;
+		}
 	}
 
 	// erase erasedNode provided that the degree of erasedNode is at most one
@@ -163,15 +184,15 @@ public:
 		TreeNode< value_type >* child;
 		if (erasedNode->left != myHead)                      //erasdNode only has one child or no child
 			child = erasedNode->left;
-		else if (erasedNode->right != myHead)
+		if (erasedNode->right != myHead)					
 			child = erasedNode->right;
 		else
-			child = myHead;
+			child = myHead;				//eraseNode don't have child
 
 		if (erasedNode == myHead->parent) // erasedNode points to the root; Cases 2 & 3 in "Ch 3 Sec 9.pptx"
 		{
 			// set child to be the new root
-			if (child != myHead) {            //child is internal node
+			if (child != myHead) {					//erasedNode have child    
 				child->parent = myHead;
 				child->left = myHead;
 				child->right = myHead;
@@ -182,7 +203,7 @@ public:
 				myHead->left = child;
 				myHead->right = child;
 			}
-			else {                        //child is the external node
+			else {                        //erasedNode don't have child => empty tree
 				myHead->parent = myHead;
 				myHead->left = myHead;
 				myHead->right = myHead;
@@ -190,7 +211,7 @@ public:
 				myHead->color = 1;
 			}
 		}
-		else
+		else			//erasedNode is internal node
 		{
 			if (erasedNode->color == 1) {     //erasedNode is black
 				child->parent = erasedNode->parent;
@@ -209,6 +230,7 @@ public:
 				}
 			}
 		}
+		
 		delete erasedNode;
 		mySize--;
 	}
@@ -333,7 +355,7 @@ public:
 
 	// Extends the container by inserting a new element,
 	// effectively increasing the container size by one.
-	void insert(const value_type& val)             //X
+	void insert(const value_type& val)             
 	{
 		if (scaryVal.mySize == 0) // empty tree (case 1.)
 		{
@@ -355,7 +377,7 @@ public:
 			TreeNode< value_type >* result = nullptr;
 			while (tryNode != scaryVal.myHead) // tryNode is not the leaf
 			{
-				result = tryNode;
+				result = tryNode;			//at beginning, result points to the root
 				//              keyCompare.operator()( val, tryNode->myval )
 				if (keyCompare(val, tryNode->myval)) // if( val < tryNode->myval )
 					tryNode = tryNode->left;
@@ -374,20 +396,23 @@ public:
 			newNode->left = scaryVal.myHead;
 			newNode->right = scaryVal.myHead;
 
-			if (keyCompare(val, result->myval)) // if( val < result->myval )
+			//--------------------X-----------------------------
+			if (keyCompare(val, result->myval)) // val < newNode->parent->myval
 				result->left = newNode;
-			else
+			else										 // val >= newNode->parent->myval
 				result->right = newNode;
-			if (keyCompare(val, scaryVal.myHead->left->myval)) {
+
+			//change myhead's left and right point to maxnum and minnum
+			if (keyCompare(val, scaryVal.myHead->left->myval) || val == scaryVal.myHead->left->myval) {
 				scaryVal.myHead->left = newNode;
 			}
-			else if (keyCompare(scaryVal.myHead->right->myval, val)) {
+			else if (keyCompare(scaryVal.myHead->right->myval, val) || val == scaryVal.myHead->right->myval) {
 				scaryVal.myHead->right = newNode;
 			}
+
 			scaryVal.mySize++;
 			scaryVal.reBalance(newNode);
 		}
-
 	}
 
 	// Removes from the set container a single element whose value is val
@@ -398,7 +423,7 @@ public:
 		TreeNode< key_type >* erasedNode = scaryVal.myHead->parent; // erasedNode points to the root
 		while (erasedNode != scaryVal.myHead && val != erasedNode->myval)
 		{
-			//           keyCompare.operator()( val, erasedNode->myval )
+			//keyCompare.operator()( val, erasedNode->myval )
 			if (keyCompare(val, erasedNode->myval)) // if( val < erasedNode->myval )
 				erasedNode = erasedNode->left;
 			else
@@ -411,6 +436,7 @@ public:
 		{  // deletes the node pointed by erasedNode
 
 			TreeNode<value_type>* tryNode = new TreeNode<value_type>;         //tryNode point to the biggest val in erasedNode's left subtree
+			tryNode = erasedNode;
 
 			if (erasedNode->left != scaryVal.myHead) {
 				tryNode = erasedNode->left;
@@ -426,7 +452,7 @@ public:
 					tryNode = tryNode->left;
 				}
 			}
-			else {
+			else {		 //erasedNode is the root and it is the only node in the tree, or erasedNode is a leaf
 				scaryVal.eraseDegreeOne(erasedNode);              //erasedNode is a internal node
 				return 1;
 			}
