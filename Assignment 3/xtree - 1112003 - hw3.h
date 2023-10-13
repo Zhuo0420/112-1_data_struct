@@ -187,7 +187,7 @@ public:
 		if (erasedNode->right != myHead)					
 			child = erasedNode->right;
 		else
-			child = myHead;				//eraseNode don't have child
+			child = myHead;				//eraseNode don't have internal child, but have leaf child
 
 		if (erasedNode == myHead->parent) // erasedNode points to the root; Cases 2 & 3 in "Ch 3 Sec 9.pptx"
 		{
@@ -197,33 +197,20 @@ public:
 			child->left = myHead;
 			child->right = myHead;
 			child->color = 1;
+			myHead->parent = child;
+			myHead->left = child;
+			myHead->right = child;
 
-			//if (child != nullptr) {					//erasedNode have child, set child to be the new root
-			//	child->parent = myHead;
-			//	child->left = myHead;
-			//	child->right = myHead;
-			//	child->isNil = 0;
-			//	child->color = 1;
-
-			//	//the tree only have one node
-			//	myHead->parent = child;
-			//	myHead->left = child;
-			//	myHead->right = child;
-			//}
-			//else {                        //erasedNode don't have child => empty tree
-			//	myHead->parent = myHead;
-			//	myHead->left = myHead;
-			//	myHead->right = myHead;
-			//	myHead->isNil = 1;
-			//	myHead->color = 1;
-			//}
 		}
-		else			//erasedNode is not root (M have parent)
+		else			//erasedNode is not root 
 		{
-			if (erasedNode->color == 1) {     //erasedNode is black, erasedNode must have one child
-											  //because left path and right path have same black node number
-				child->parent = erasedNode->parent;
-				if (erasedNode->parent->left == erasedNode) 
+			if (erasedNode->color == 1) {     //erasedNode is black  
+				
+				if (child != myHead) {			//erasedNode have internal child 
+					child->parent = erasedNode->parent;
+				}
+				
+				if (erasedNode->parent->left == erasedNode)				//erasedNode not the root, so the parent is not myhead 
 					erasedNode->parent->left = child;
 				else 
 					erasedNode->parent->right = child;
@@ -236,12 +223,12 @@ public:
 			else {        //erasedNode is red (case 1.)
 				if (child != myHead) {
 					child->parent = erasedNode->parent;
-					if (erasedNode->parent->left == erasedNode) {
-						erasedNode->parent->left = child;
-					}
-					else {
-						erasedNode->parent->right = child;
-					}
+				}
+				if (erasedNode->parent->left == erasedNode) {
+					erasedNode->parent->left = child;
+				}
+				else {
+					erasedNode->parent->right = child;
 				}
 			}
 		}
@@ -424,7 +411,7 @@ public:
 	size_type erase(const key_type& val)
 	{
 		TreeNode< key_type >* erasedNode = scaryVal.myHead->parent; // erasedNode points to the root
-		while (erasedNode != scaryVal.myHead && val != erasedNode->myval)
+		while (erasedNode != scaryVal.myHead && val != erasedNode->myval)		//search the node to be erased
 		{
 			//keyCompare.operator()( val, erasedNode->myval )
 			if (keyCompare(val, erasedNode->myval)) // if( val < erasedNode->myval )
@@ -441,7 +428,7 @@ public:
 			TreeNode<value_type>* tryNode = new TreeNode<value_type>;         //tryNode point to the biggest val in erasedNode's left subtree
 			tryNode = erasedNode;
 
-			if (erasedNode->left != scaryVal.myHead) {
+			if (erasedNode->left != scaryVal.myHead) {				
 				tryNode = erasedNode->left;
 				while (tryNode->right != scaryVal.myHead)         //find the biggest val in erasedNode's left subtree
 				{
