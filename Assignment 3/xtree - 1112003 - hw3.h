@@ -56,8 +56,8 @@ public:
 	}
 
 	// rebalance for insertion; n points to the inserted node
-	void reBalance(TreeNode< value_type >* n)				//n have parent, but grandparent may be myhead
-	{  // n->parent cannot be the root
+	void reBalance(TreeNode< value_type >* n)				//n have parent, but grandparent may be myhead  //X
+	{  // n->parent (g) cannot be the root
 		TreeNode< value_type >* p = n->parent;
 		TreeNode< value_type >* g = p->parent;
 		TreeNode< value_type >* u; // uncle of n
@@ -84,7 +84,7 @@ public:
 			if (g->parent != myHead) // g is not the root
 			{
 				g->color = 0;
-				if ((g->parent)->color == 0)
+				if (g->parent->color == 0)
 					reBalance(g);
 			}
 		}
@@ -123,14 +123,24 @@ public:
 	void rightRotation(TreeNode< value_type >* p)
 	{
 		TreeNode< value_type >* g = p->parent;
-		TreeNode<value_type>* PR = p->right; // left child of p
+		TreeNode<value_type>* PR = p->right; // right child of p
 
-		//let g's parent point to p
-		if (g->parent->left == g) {
-			g->parent->left = p;
+		/*if (PR == myHead)
+			cout << "PR" << endl;*/
+
+		if (g->parent!=myHead)
+		{
+			//let g's parent point to p
+			if (g->parent->left == g) {
+				g->parent->left = p;
+			}
+			else {
+				g->parent->right = p;
+			}
 		}
-		else {
-			g->parent->right = p;
+		else
+		{
+			myHead->parent = p;
 		}
 
 		p->parent = g->parent;
@@ -152,13 +162,22 @@ public:
 		TreeNode< value_type >* g = p->parent;
 		TreeNode<value_type>* PL = p->left; // left child of p
 
-		//let g's parent point to p
-		if (g->parent->left == g) {
-			g->parent->left = p;
+		/*if (PL == myHead)
+			cout << "PL" << endl;*/
+
+		if(g->parent != myHead) {			//g is not root
+			//let g's parent point to p
+			if (g->parent->left == g) {
+				g->parent->left = p;
+			}
+			else
+			{
+				g->parent->right = p;			
+			}
 		}
-		else
+		else			//g is root
 		{
-			g->parent->right = p;
+			myHead->parent = p;
 		}
 
 		p->parent = g->parent;
@@ -231,6 +250,12 @@ public:
 					erasedNode->parent->right = child;
 				}
 			}
+		}
+		if (erasedNode->myval == myHead->left->myval) {
+			myHead->left = erasedNode->parent;
+		}
+		else if (erasedNode->myval == myHead->right->myval) {
+			myHead->right = erasedNode->parent;
 		}
 		
 		delete erasedNode;
@@ -371,10 +396,9 @@ public:
 				//              keyCompare.operator()( val, tryNode->myval )
 				if (keyCompare(val, tryNode->myval)) // if( val < tryNode->myval )
 					tryNode = tryNode->left;
-				else if (keyCompare(tryNode->myval, val) || val == tryNode->myval) // if( val > tryNode->myval || val == tryNode->myval)
+				else // if( val > tryNode->myval || val == tryNode->myval)
 					tryNode = tryNode->right;
-				else
-					return;
+				
 			}
 
 			//inserts a new node
@@ -386,7 +410,6 @@ public:
 			newNode->left = scaryVal.myHead;
 			newNode->right = scaryVal.myHead;
 
-			//--------------------X-----------------------------
 			if (keyCompare(val, result->myval)) // val < newNode->parent->myval
 				result->left = newNode;
 			else										 // val >= newNode->parent->myval
