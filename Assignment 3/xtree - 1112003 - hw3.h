@@ -192,41 +192,56 @@ public:
 		if (erasedNode == myHead->parent) // erasedNode points to the root; Cases 2 & 3 in "Ch 3 Sec 9.pptx"
 		{
 			// set child to be the new root
-			if (child != myHead) {					//erasedNode have child    
-				child->parent = myHead;
-				child->left = myHead;
-				child->right = myHead;
-				child->isNil = 0;
-				child->color = 1;
 
-				myHead->parent = child;
-				myHead->left = child;
-				myHead->right = child;
-			}
-			else {                        //erasedNode don't have child => empty tree
-				myHead->parent = myHead;
-				myHead->left = myHead;
-				myHead->right = myHead;
-				myHead->isNil = 1;
-				myHead->color = 1;
-			}
+			child->parent = myHead;
+			child->left = myHead;
+			child->right = myHead;
+			child->color = 1;
+
+			//if (child != nullptr) {					//erasedNode have child, set child to be the new root
+			//	child->parent = myHead;
+			//	child->left = myHead;
+			//	child->right = myHead;
+			//	child->isNil = 0;
+			//	child->color = 1;
+
+			//	//the tree only have one node
+			//	myHead->parent = child;
+			//	myHead->left = child;
+			//	myHead->right = child;
+			//}
+			//else {                        //erasedNode don't have child => empty tree
+			//	myHead->parent = myHead;
+			//	myHead->left = myHead;
+			//	myHead->right = myHead;
+			//	myHead->isNil = 1;
+			//	myHead->color = 1;
+			//}
 		}
-		else			//erasedNode is internal node
+		else			//erasedNode is not root (M have parent)
 		{
-			if (erasedNode->color == 1) {     //erasedNode is black
+			if (erasedNode->color == 1) {     //erasedNode is black, erasedNode must have one child
+											  //because left path and right path have same black node number
 				child->parent = erasedNode->parent;
+				if (erasedNode->parent->left == erasedNode) 
+					erasedNode->parent->left = child;
+				else 
+					erasedNode->parent->right = child;
+
 				if (child->color == 0) // Case 2 in "Ch 3 Sec 9.pptx"
-					child->color = 1;
-				else                   // Case 4 in "Ch 3 Sec 9.pptx"
-					fixUp(child, erasedNode->parent);
+					child->color = 1;  
+				else 
+					fixUp(child, erasedNode->parent);			// Case 4 in "Ch 3 Sec 9.pptx"
 			}
 			else {        //erasedNode is red (case 1.)
-				child->parent = erasedNode->parent;
-				if (erasedNode->parent->left == erasedNode) {
-					erasedNode->parent->left = child;
-				}
-				else {
-					erasedNode->parent->right = child;
+				if (child != myHead) {
+					child->parent = erasedNode->parent;
+					if (erasedNode->parent->left == erasedNode) {
+						erasedNode->parent->left = child;
+					}
+					else {
+						erasedNode->parent->right = child;
+					}
 				}
 			}
 		}
@@ -236,87 +251,75 @@ public:
 	}
 
 	// rebalance for deletion; Case 4 in "Ch 3 Sec 9.pptx"
-	void fixUp(TreeNode< value_type >* N, TreeNode< value_type >* P)
+	void fixUp(TreeNode< value_type >* N, TreeNode< value_type >* P)  //N is leaf (myhead), P is parent of N
 	{
 		TreeNode<value_type>* S; // sibling of N
 
-		if (P->left == N) {
+		if (P->left == N)
 			S = P->right;
-		}
-		else {
+		else 
 			S = P->left;
-		}
 
 		TreeNode<value_type>* SL = S->left; // left child of S
 		TreeNode<value_type>* SR = S->right; // right child of S
 
-		if (S->color == 0) {             //N is red (case 4.1)
-			if (P->left == N) {
-				char tmp = P->color;
-
+		if (S->color == 0) {             //N is red (case 4.1) (S must have two internal child)
+			if (P->left == N) {			 //4.1.1 n is left child of p
 				leftRotation(S);         //S up, P down
 				P->color = 0;
-				S->color = tmp;
+				S->color = 1;
 				fixUp(N, P);
 
-				tmp = P->color;
-				P->color = SL->color;
-				SL->color = tmp;
+				/*SL->color = 0;
+				p->color = 1;*/
 			}
-			else {
-				char tmp = P->color;
-
+			else {						//n is right child of p
 				rightRotation(S);        //S up, P down
 				P->color = 0;
-				S->color = tmp;
+				S->color = 1;
 				fixUp(N, P);
-
-				tmp = P->color;
-				P->color = SR->color;
-				SR->color = tmp;
+				
+				/*SR->color = 0;
+				p->color = 1;*/
 			}
 		}
 		else {           //s is black
-			if (SR->color == 0) {            //SR is red. case 4.2
-				if (P->left == N) {          //case 4.2.1
-					char tmp = P->color;
-					leftRotation(S);         //S up, P down
-					P->color = 1;
-					S->color = tmp;
-					SR->color = 1;
-				}
-				else {
-					char tmp = P->color;     //4.2.2
-					rightRotation(S);        //S up, P down
-					P->color = 1;
-					S->color = tmp;
-					SR->color = 1;
-				}
+			if (SL->color == 1 && SR->color == 0 && P->right == N) {            //s is black, SR is red, SL is black. case 4.3.2
+
+				leftRotation(SR);
+				SR->color = 1;
+				S->color = 0;
+				fixUp(N, P);			//fit case 4.2.2
+				
 			}
-			else {           //SR is black
-				if (SL->color == 0) {       //SL is red. case 4.3
-					if (P->left == N) {          //case 4.3.1
-						rightRotation(SL);
-						SL->color = 1;
-						S->color = 0;
-						fixUp(N, P);
-					}
-					else if (P->right == N && SR->color == 0) {      //case 4.3.2
-						leftRotation(SR);
-						SR->color = 1;
-						S->color = 0;
-						fixUp(N, P);
-					}
+			else if(SL->color == 0 && SR->color == 1 && P->left == N){           //s is black, SL is red, SR is black, N is left child of P. 4.3.1
+
+				rightRotation(SL);
+				SL->color = 1;
+				S->color = 0;
+				fixUp(N, P);			//fit case 4.2.1
+
+			}
+			else if (SL->color == 1 && SR->color == 1 && P->color == 0) { //case 4.4
+				P->color = 1;
+				S->color = 0;
+			}
+			else if (SL->color == 1 && SR->color == 1 && P->color == 1) {   //all black, case 4.5
+				S->color = 0;
+				fixUp(P, P->parent);
+			}
+			else if (SR->color == 0) {
+				if (P->left == N) {					//case 4.2.1
+					leftRotation(S);
+					S->color = P->color;
+					P->color = 1;
+					SR->color = 1;
 				}
-				else {       //SL is black
-					if (P->color == 0) {     //P is red (case 4.4)
-						P->color = 1;
-						S->color = 0;
-					}
-					else {           //P is black (case 4.5)
-						S->color = 0;
-						fixUp(P, P->parent);
-					}
+				else if(P->right == N){				//case 4.2.2
+					rightRotation(S);
+					S->color = P->color;
+					P->color = 1;
+					SR->color = 1;
 				}
 			}
 		}
