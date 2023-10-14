@@ -242,7 +242,7 @@ public:
 				if (child->color == 0) // Case 2 in "Ch 3 Sec 9.pptx"
 					child->color = 1;  
 				else 
-					fixUp(child, erasedNode->parent);			// Case 4 in "Ch 3 Sec 9.pptx"
+					fixUp(child, child->parent);			// Case 4 in "Ch 3 Sec 9.pptx"
 			}
 			else {        //erasedNode is red (case 1.)
 				if (child != myHead) {
