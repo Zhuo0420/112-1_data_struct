@@ -177,7 +177,7 @@ public:
 		}
 		else			//g is root
 		{
-			myHead->parent = p;
+			myHead->parent = p;			//myhead point to new root p
 		}
 
 		p->parent = g->parent;
@@ -200,6 +200,11 @@ public:
 	// erasedNode == M in "Ch 3 Sec 9.pptx"
 	void eraseDegreeOne(TreeNode< value_type >* erasedNode)
 	{
+
+		//--------------------------debug-----------------------------
+		TreeNode< value_type >* temp = myHead->parent;				//original root
+		//--------------------------debug-----------------------------
+
 		TreeNode< value_type >* child;
 		if (erasedNode->left != myHead)                      //erasdNode only has one child or no child
 			child = erasedNode->left;
@@ -260,11 +265,27 @@ public:
 		
 		delete erasedNode;
 		mySize--;
+
+		//--------------------------debug-----------------------------
+		if(temp!=myHead->parent)
+		{
+			cout << "eraseDegreeOne function : " << endl;
+			cout << "root is been change : ori : " << temp->myval << " new : " << myHead->parent->myval << " size : " << mySize << endl;
+			cout << endl;
+		}
+		//--------------------------debug-----------------------------
+
 	}
 
 	// rebalance for deletion; Case 4 in "Ch 3 Sec 9.pptx"
 	void fixUp(TreeNode< value_type >* N, TreeNode< value_type >* P)  //N is leaf (myhead), P is parent of N
 	{
+
+		//--------------------------debug-----------------------------
+		TreeNode< value_type >* temp = myHead->parent;				//original root
+		//cout << "erase case 4 been call" << endl << endl;
+		//--------------------------debug-----------------------------
+
 		TreeNode<value_type>* S; // sibling of N
 
 		if (P->left == N)
@@ -285,7 +306,7 @@ public:
 				/*SL->color = 0;
 				p->color = 1;*/
 			}
-			else {						//n is right child of p
+			else if(P->right == N){						//n is right child of p
 				rightRotation(S);        //S up, P down
 				P->color = 0;
 				S->color = 1;
@@ -318,23 +339,30 @@ public:
 			}
 			else if (SL->color == 1 && SR->color == 1 && P->color == 1) {   //all black, case 4.5
 				S->color = 0;
-				fixUp(P, P->parent);
+				if(P != myHead->parent)
+					fixUp(P, P->parent);
 			}
-			else if (SR->color == 0) {
-				if (P->left == N) {					//case 4.2.1
-					leftRotation(S);
-					S->color = P->color;
-					P->color = 1;
-					SR->color = 1;
-				}
-				else if(P->right == N){				//case 4.2.2
-					rightRotation(S);
-					S->color = P->color;
-					P->color = 1;
-					SR->color = 1;
-				}
+			else if (SR->color == 0 && P->left == N) {				//case 4.2.1
+				leftRotation(S);
+				S->color = P->color;
+				P->color = 1;
+				SR->color = 1;
 			}
+			else if(SL->color == 0 && P->right == N){				//case 4.2.2
+				rightRotation(S);
+				S->color = P->color;
+				P->color = 1;
+				SR->color = 1;
+			}			
 		}
+
+		//--------------------------debug-----------------------------
+		if (temp != myHead->parent) {
+			cout<<"fixUp function : "<<endl;
+			cout << "root is been change : ori : " << temp->myval << " new : " << myHead->parent->myval << " size : " << mySize << endl;
+			cout << endl;
+		}
+		//--------------------------debug-----------------------------
 
 	}
 
@@ -388,6 +416,11 @@ public:
 		}
 		else                        // not empty tree 
 		{                           // scaryVal.myHead->parent points to the root
+
+			//--------------------------debug-----------------------------
+			TreeNode<value_type> * temp = scaryVal.myHead->parent; // temp points to the root
+			//--------------------------debug-----------------------------
+
 			TreeNode< value_type >* tryNode = scaryVal.myHead->parent; // tryNode points to the root
 			TreeNode< value_type >* result = nullptr;
 			while (tryNode != scaryVal.myHead) // tryNode is not the leaf
@@ -410,20 +443,40 @@ public:
 			newNode->left = scaryVal.myHead;
 			newNode->right = scaryVal.myHead;
 
+			//--------------------------debug-----------------------------
+			if (result == nullptr) 
+			{ 
+				cout<<"insert function : "<<endl;
+				cout << val << "!!!!" << endl; 
+				cout << "root's val : " << tryNode->myval << endl;
+				cout << "size : " << scaryVal.mySize << endl;
+				cout << endl;
+			}
+			//--------------------------debug-----------------------------
+
 			if (keyCompare(val, result->myval)) // val < newNode->parent->myval
 				result->left = newNode;
-			else										 // val >= newNode->parent->myval
+			else if (keyCompare(result->myval, val))										 // val >= newNode->parent->myval
 				result->right = newNode;
+			else return;
 
 			//change myhead's left and right point to maxnum and minnum
-			if (keyCompare(val, scaryVal.myHead->left->myval) || val == scaryVal.myHead->left->myval) {
+			if (keyCompare(val, scaryVal.myHead->left->myval)) {
 				scaryVal.myHead->left = newNode;
 			}
-			else if (keyCompare(scaryVal.myHead->right->myval, val) || val == scaryVal.myHead->right->myval) {
+			else if (keyCompare(scaryVal.myHead->right->myval, val)) {
 				scaryVal.myHead->right = newNode;
 			}
 
 			scaryVal.mySize++;
+
+			//--------------------------debug-----------------------------
+			if (temp != scaryVal.myHead->parent)
+			{
+				cout << "root is been change : ori : " << temp->myval << " new : " << scaryVal.myHead->parent->myval << " size : " << scaryVal.mySize << endl;
+			}
+			//--------------------------debug-----------------------------
+
 			scaryVal.reBalance(newNode);
 		}
 	}
@@ -434,6 +487,18 @@ public:
 	size_type erase(const key_type& val)
 	{
 		TreeNode< key_type >* erasedNode = scaryVal.myHead->parent; // erasedNode points to the root
+
+		//--------------------------debug-----------------------------
+		TreeNode< key_type >* temp = scaryVal.myHead->parent;				//original root
+		if(erasedNode == scaryVal.myHead) {
+			cout<<"erase function : "<<endl;
+			cout << "root is null" << endl;
+			cout<<"size : " << scaryVal.mySize << endl;
+			cout << endl;
+		}
+		//--------------------------debug-----------------------------
+
+
 		while (erasedNode != scaryVal.myHead && val != erasedNode->myval)		//search the node to be erased
 		{
 			//keyCompare.operator()( val, erasedNode->myval )
@@ -473,6 +538,16 @@ public:
 			erasedNode->myval = tryNode->myval;               //replace erasedNode's val with tryNode's val
 
 			scaryVal.eraseDegreeOne(tryNode);              //erase tryNode
+
+			//--------------------------debug-----------------------------
+			if (temp!=scaryVal.myHead->parent)
+			{
+				cout << "erase function : " << endl;
+				cout << "root is been change : ori : " << temp->myval << " new : " << scaryVal.myHead->parent->myval << " size : " << scaryVal.mySize << endl;
+				cout << endl;
+			}
+			//--------------------------debug-----------------------------
+
 			return 1;
 		}
 	}
