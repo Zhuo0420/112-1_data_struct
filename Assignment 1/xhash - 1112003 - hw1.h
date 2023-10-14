@@ -163,6 +163,7 @@ public:
                maxidx *= 2;
 
             myVec.assignGrow( 2 * maxidx, myList.end() );       //擴大bucket
+            mask = maxidx - 1;
             MyList oldList(myList);         //copy constructor 創建oldList時把myList中的內容複製進去 
             myList.clear();         //myList內容清掉
             size_type tmp = NULL;
@@ -181,26 +182,34 @@ public:
    // This effectively reduces the container size by one.
    void erase( const key_type &keyVal )
    {
-      iterator it = find( keyVal );
+      iterator it = find( keyVal );         //此值的bucket
 
       if( it != myList.end() ) // found
       {
           size_type keyValue = bucket(keyVal);
           if (myVec.myData.myFirst[2 * keyValue] == myVec.myData.myFirst[2 * keyValue + 1]) {       //此小串list只有一個node
-              if (myVec.myData.myFirst[2 * keyValue] != myList.end()) {     ////此小串list只有一個node且在最尾端 (head node 要指向原本的倒數第二個)
-                  iterator it2 = ++myList.end();
-              }
+              //if (myVec.myData.myFirst[2 * keyValue] != myList.end()) {     ////此小串list只有一個node且在最尾端 (head node 要指向原本的倒數第二個)
+              //    myList.erase(keyVal);
+              //}
+              myList.erase(it);
               myVec.myData.myFirst[2 * keyValue] = myList.end();
               myVec.myData.myFirst[2 * keyValue + 1] = myList.end();
           }
-          else if (*(myVec.myData.myFirst[2 * keyValue + 1]) == keyVal) {        //此key值有複數node
-              myVec.myData.myFirst[2 * keyValue + 1] = --it;
+          else {        //此key值有複數node
+              if (*(myVec.myData.myFirst[2 * keyValue]) == keyVal) {        //此 node 在小串 list 中的頭
+                  myVec.myData.myFirst[2 * keyValue] = ++it;
+                  it--;
+                  myList.erase(it);
+              }
+              else if (*(myVec.myData.myFirst[2 * keyValue + 1]) == keyVal) {       //此 node 在小串 list 中的尾
+                  myVec.myData.myFirst[2 * keyValue + 1] = --it;
+                  it++;
+                  myList.erase(it);
+              }
+              else {
+                  myList.erase(it);
+              }
           }
-          else if (*(myVec.myData.myFirst[2 * keyValue]) == keyVal) {
-              myVec.myData.myFirst[2 * keyValue] = ++it;
-          }
-
-         myList.erase( it );
       }
    }
 
